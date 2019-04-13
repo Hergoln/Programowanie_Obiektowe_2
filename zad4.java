@@ -3,8 +3,6 @@ import java.nio.charset.Charset;
 import  java.nio.file.*;
 import java.util.*;
 
-// exercise don't specify how characters should be read, so I read them char by char
-// the way I read it indicates many IO operations, maybe reading line by line would change time differences
 class zad4 {
     public static void main(String[] args) {
         Random r = new Random();
@@ -63,6 +61,7 @@ class zad4 {
             System.out.println("Can't find file to write to or read from");
             return;
         }
+
         System.out.println("\nTime in microseconds");
         System.out.println("Writing IO: " + IOtimeWrite/1000);
         System.out.println("Reading IO: " + IOtimeRead/1000);
