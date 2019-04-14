@@ -5,28 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
 
-class myKeyListener implements KeyListener {
-    public void keyTyped(KeyEvent e) {
-        System.out.println("Key typed " + e.getKeyCode());
-        return;
-    }
-
-    public void keyPressed(KeyEvent e) {
-        System.out.println("Key pressed " + e.getKeyCode());
-        return;
-    }
-
-    public void keyReleased(KeyEvent e) {
-        System.out.println("Key released " + e.getKeyCode());
-        return;
-    }
-}
-
 class zad5 {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         Random r = new Random();
-        int rval;
+        int rval = 0, temp = 0;
         try {
             System.out.print("Enter path: ");
             Path filePath = Paths.get(input.nextLine());
@@ -42,12 +25,14 @@ class zad5 {
             buffRead.close();
             String content = new String(contentBuff);
 
+            System.out.println("Type something to get letters from file:");
             while(true){
 
                 if(input.hasNext()) {
                     input.next();
-                    rval = r.nextInt(content.length() - 5);
-                    System.out.println(content.substring(rval, rval + 5));
+                    temp = r.nextInt(4)+1;
+                    System.out.println(content.substring(rval, rval + temp));
+                    rval += temp;
                 }
             }
         }
@@ -56,6 +41,11 @@ class zad5 {
         }
         catch (IOException ioExc){
             System.out.println("Couldn't open/create file");
+        }
+        catch(IndexOutOfBoundsException IOOBexc)
+        {
+            System.out.println("You reached end of file");
+            System.exit(0);
         }
     }
 }

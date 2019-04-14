@@ -26,69 +26,64 @@ class zad6 {
         return out;
     }
 
-    public static void main(String[] args) {
-        Vector<Integer> firstVector = new Vector<Integer>();
-        Vector<Integer> secondVector = new Vector<Integer>();
-
+    static void readVector(Vector<Integer> vector){
         Scanner input = new Scanner(System.in);
         String bufferLine;
         String[] buffer;
-
-        System.out.println("Enter first vector: ");
         while (true) {
             bufferLine = input.nextLine();
             if(bufferLine.isEmpty())
             {
                 System.out.println("Empty line");
+                continue;
             }
             buffer = bufferLine.split(" ");
             for (String i : buffer) {
                 if (!i.isEmpty()) {
                     try {
-                        firstVector.add(Integer.parseInt(i));
+                        vector.add(Integer.parseInt(i));
                     } catch (NumberFormatException nfExc) {
                         // jump in case
                     }
                 }
             }
-            if (firstVector.size() != 0) {
+            if (vector.size() != 0) {
                 break;
             }
-            System.out.println("Sequence is not number vector\nenter first vector again");
+            System.out.println("Sequence is not number vector\nenter vector again:");
+        }
+        return;
+    }
+
+    public static void main(String[] args) {
+        Vector<Integer> firstVector = new Vector<Integer>();
+        Vector<Integer> secondVector = new Vector<Integer>();
+        Vector<Integer> computed = new Vector<Integer>();
+        boolean done = false;
+        while(!done){
+            System.out.println("Enter first vector: ");
+            readVector(firstVector);
+
+            System.out.println("Enter second vector: ");
+            readVector(secondVector);
+            try{
+                computed = compute(firstVector, secondVector);
+            }
+            catch(VectorsDifferentLengthException vdlExc){
+                System.out.println(vdlExc);
+                firstVector.clear();
+                secondVector.clear();
+                continue;
+            }
+            done = true;
         }
 
-        System.out.println("Enter second vector: ");
-        while (true) {
-            bufferLine = input.nextLine();
-            if(bufferLine.isEmpty())
-            {
-                System.out.println("Empty line");
-            }
-            buffer = bufferLine.split(" ");
-            for (String i : buffer) {
-                if (!i.isEmpty()) {
-                    try {
-                        secondVector.add(Integer.parseInt(i));
-                    } catch (NumberFormatException nfExc) {
-                        // jump in case
-                    }
-                }
-            }
-            if (secondVector.size() != 0) {
-                break;
-            }
-            System.out.println("Sequence is not number vector\nenter first vector again");
-        }
-
+        System.out.print("Computed vector: ");
         try(BufferedWriter buffWrite = Files.newBufferedWriter(Paths.get("zad6uot.txt"), Charset.forName("UTF-8"))){
-            Vector<Integer> computed = compute(firstVector, secondVector);
             for(Integer i: computed){
                 System.out.print(i+" ");
                 buffWrite.write(i+" ");
             }
-        }
-        catch(VectorsDifferentLengthException vdlExc){
-            System.out.println(vdlExc);
         }
         catch(IOException ioExc){
             System.out.println("Couldn't open/create file");
