@@ -111,7 +111,6 @@ class zad7 {
             while(iter.hasNext()){
                 System.out.println(iter.next().getValue().Opis());
             }
-
         }
         catch (NullPointerException NPEExc){
             System.out.println("huehue");
