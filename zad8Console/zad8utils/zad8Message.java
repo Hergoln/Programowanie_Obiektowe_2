@@ -1,4 +1,4 @@
-package zad8utils;
+package zad8Utils;
 import java.util.*;
 import java.io.Serializable;
 

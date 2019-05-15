@@ -1,4 +1,4 @@
-package zad8utils;
+package zad8Utils;
 
 public class zad8Exception extends Exception {
   public zad8Exception(){}

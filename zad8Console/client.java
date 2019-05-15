@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import javax.swing.JOptionPane;
 import java.text.*;
-import zad8utils.*;
+import zad8Utils.*;
 
 public class client {
     public static void main(String[] args) throws Exception {
@@ -22,16 +22,15 @@ public class client {
           Date date = null;
           ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
           threadPool.execute(new NoteListener(socket));
-
-          System.out.println("Enter your message:");
+          
           while(true){
-            
+            System.out.println("Enter your message:");
             while(true){
               try{
                 content = scanner.nextLine();
                 checkContent(content);
               } catch(zad8Exception zad8exc){
-                System.out.println(zad8exc + "\nNow enter message without throw(just because).");
+                System.out.println(zad8exc + "\nNow enter message without throw.");
                 continue;
               }
               break;
