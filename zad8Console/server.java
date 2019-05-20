@@ -36,12 +36,13 @@ public class server {
                 this.input = new ObjectInputStream(socket.getInputStream());
                 this.out = new ObjectOutputStream(socket.getOutputStream());
                 ExecutorService threadPool = Executors.newFixedThreadPool(4);
-                threadPool.execute(new Sender(messageQueue, this.out, socket));
+                threadPool.execute(new Sender(this.messageQueue, this.out, this.socket, this.threadLock));
                 inputBytes = null;
-                synchronized(threadLock){
-                    while(true){
-                        try{this.inputBytes = input.readObject();} catch(ClassNotFoundException CNFexc) {System.out.println("Data in stream is not an Object"); continue;}
-                        if(this.inputBytes instanceof zad8Message){
+                while(true){
+                    
+                    try{this.inputBytes = input.readObject();} catch(ClassNotFoundException CNFexc) {System.out.println("Data in stream is not an Object"); continue;}
+                    if(this.inputBytes instanceof zad8Message){
+                        synchronized(threadLock){
                             messageQueue.add((zad8Message)this.inputBytes);
                             System.out.println("MESSAGE ADDED");
                             messageQueueInfo(this.messageQueue, this.socket);
@@ -62,14 +63,15 @@ public class server {
 
         private static class Sender implements Runnable{
             ArrayList<zad8Message> messageQueue;
-            Object threadLock = new Object();
+            Object threadLock;
 
             ObjectOutputStream out;
             Socket socket;
-            Sender(ArrayList<zad8Message> _messageQueue, ObjectOutputStream _out, Socket _socket){
+            Sender(ArrayList<zad8Message> _messageQueue, ObjectOutputStream _out, Socket _socket, Object _lock){
                 this.messageQueue = _messageQueue;
                 this.out = _out;
                 this.socket = _socket;
+                this.threadLock = _lock;
             }
 
             @Override
@@ -79,17 +81,17 @@ public class server {
                 while(true){
                     try{
                         Date currentDate = new Date();
-                        synchronized(threadLock)
-                        {
                             for(int i=0; i < this.messageQueue.size(); ++i){
-                                if(this.messageQueue.get(i).getReturnTime().before(currentDate)){
-                                    this.out.writeObject(this.messageQueue.get(i));
-                                    this.messageQueue.remove(i);
-                                    messageQueueInfo(this.messageQueue, this.socket);
-                                    System.out.println("============================");
+                                if(this.messageQueue.get(i).returnTime.before(currentDate)){
+                                    synchronized(this.threadLock)
+                                    {
+                                        this.out.writeObject(this.messageQueue.get(i));
+                                        this.messageQueue.remove(i);
+                                        messageQueueInfo(this.messageQueue, this.socket);
+                                        System.out.println("============================");
+                                    }
                                 }
                             }
-                        }
                         if( socket.isClosed() || socket == null) break;
                     }
                     catch(IOException IOexc){
@@ -97,11 +99,11 @@ public class server {
                         return;
                     }
                     catch(NullPointerException exc)
-                    {// Dude, fuck that, for some reason the exception is thrown and i don't care because it doesn't change a damn thing
+                    {
                         System.out.println("========================Null Exception Sender========================");
                         messageQueueInfo(this.messageQueue, this.socket);
-                        System.out.println(exc);
                         System.out.println("================End of Null Exception handling================");
+                        continue;
                     }
                 }
             }
@@ -114,8 +116,8 @@ public class server {
                 "\n\tMessages in queue:");
         for(zad8Message message : _queue){
             if(message == null) System.out.println("NULL");
-            else System.out.println("\t\tContent: " + message.getMessage() == null ? "NULL" : message.getMessage() +
-                    "\n\t\tReturnDate: " + message.getReturnTime().toString() == null ? "NULL" : message.getReturnTime().toString());
+            else System.out.println("\t\tContent: " + message.content +
+                    "\n\t\tReturnDate: " + message.returnTime.toString());
         }
     }
 }

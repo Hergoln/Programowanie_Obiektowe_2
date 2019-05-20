@@ -67,7 +67,7 @@ public class client {
           while(!socket.isClosed()){
             this.inputBytes = in.readObject();
             if(this.inputBytes instanceof zad8Message){
-              JOptionPane.showMessageDialog(null, ((zad8Message)inputBytes).getMessage(), ((zad8Message)inputBytes).getReturnTime().toString(), JOptionPane.PLAIN_MESSAGE);
+              JOptionPane.showMessageDialog(null, ((zad8Message)inputBytes).content, ((zad8Message)inputBytes).returnTime.toString(), JOptionPane.PLAIN_MESSAGE);
             }
           }
         } catch(Exception e){System.out.println("wuntek:: Error: " + e);}
